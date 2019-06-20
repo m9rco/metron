@@ -63,7 +63,9 @@ RUN yum install -y \
 RUN yum groupinstall -y "Development tools" 
 
 RUN curl -o /root/metron-0.7.1.tgr.gz https://m9rco-bjhb2-storage.oss-cn-beijing.aliyuncs.com/apache-metron_0.7.1-release.tar.gz \
-     && tar xvf /root/metron-0.7.1.tgr.gz 
+     && tar xvf /root/metron-0.7.1.tgr.gz \
+     && rm -f /root/metron-0.7.1.tgr.gz \
+     && mv /root/metron-apache-metron_0.7.1-release /root/metron
 
     # install python 2.7.11 but do not make it the default \
 RUN curl -o /usr/src/Python-2.7.11.tgz https://m9rco-bjhb2-storage.oss-cn-beijing.aliyuncs.com/Python-2.7.11.tgz \
@@ -113,14 +115,14 @@ RUN cd /usr/src \
 
 
 # Enable systemd usage
-RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in ; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
-    rm -f /lib/systemd/system/multi-user.target.wants/; \
-    rm -f /etc/systemd/system/.wants/; \
-    rm -f /lib/systemd/system/local-fs.target.wants/; \
-    rm -f /lib/systemd/system/sockets.target.wants/udev; \
-    rm -f /lib/systemd/system/sockets.target.wants/initctl; \
-    rm -f /lib/systemd/system/basic.target.wants/; \
-    rm -f /lib/systemd/system/anaconda.target.wants/*;
+# RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in ; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+#    rm -f /lib/systemd/system/multi-user.target.wants/; \
+#    rm -f /etc/systemd/system/.wants/; \
+#    rm -f /lib/systemd/system/local-fs.target.wants/; \
+#    rm -f /lib/systemd/system/sockets.target.wants/udev; \
+#    rm -f /lib/systemd/system/sockets.target.wants/initctl; \
+#    rm -f /lib/systemd/system/basic.target.wants/; \
+#    rm -f /lib/systemd/system/anaconda.target.wants/*;
 
 # VOLUME ["/sys/fs/cgroup"]
 

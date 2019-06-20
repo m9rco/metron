@@ -32,7 +32,7 @@ To use a specific version, you can pull a versioned tag. You can view the [list 
 ## Run the Docker
 
 ```
-docker run -itd --privileged --name=metron m9rco/metron
+docker run -itd --privileged --name=metron m9rco/metron:latest
 ```
 
 ## Go inside the docker
