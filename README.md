@@ -29,10 +29,6 @@ docker pull m9rco/metron:latest
 
 To use a specific version, you can pull a versioned tag. You can view the [list of available versions](https://hub.docker.com/r/m9rco/metron/tags/) in the Docker Hub Registry.
 
-```sh
-$ docker pull m9rco/metron:[TAG]
-```
-
 ## Run the Docker
 
 ```

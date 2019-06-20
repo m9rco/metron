@@ -33,13 +33,18 @@ RUN mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backu
     && yum makecache
 
 # Start
-RUN yum install -y \
+# base development tools required \
+RUN yum groupinstall -y \
+        "Development tools" \
+    yum install -y \
         tar \
         initscripts \
         sudo \
+        which \
         centos-release-scl \
         devtoolset-4-gcc-c++ \
         devtoolset-4-gcc \
+        zlib \
         zlib-dev \
         openssl-devel \
         sqlite-devel \
@@ -51,12 +56,10 @@ RUN yum install -y \
         asciidoc \
         rpm-build \
         rpm2cpio \
+        tar \
         xmlto \
         rpmlint \
         make \
-    # base development tools required \
-     && yum groupinstall -y \
-        "Development tools" \
     # Install Software Collections repo (needs to be done in separate command) \
     # newer cpp 11 support required for building node modules \
     # install metron 0.7.1  \
@@ -76,11 +79,13 @@ RUN yum install -y \
     && rm setuptools-11.3.tar.gz \
     && cd /usr/src/setuptools-11.3 \
     && python2.7 setup.py install \
+    && mkdir /root/.pip \
+    && echo "[global]" > /root/.pip/pip.conf \
+    && echo "trusted-host=pypi.tuna.tsinghua.edu.cn" >> /root/.pip/pip.conf \
+    && echo "index-url=https://pypi.tuna.tsinghua.edu.cn/simple/" >> /root/.pip/pip.conf \
     && easy_install-2.7 pip \
     # install ansible and set the configuration var \
-    && pip2.7 install \
-        ansible==2.0.0.2 \
-        boto \
+    && pip2.7 install cryptography==2.5 ansible==2.0.0.2 boto \
     # java \
     && cd /usr/src \
     # setup maven \
