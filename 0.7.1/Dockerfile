@@ -32,20 +32,19 @@ RUN mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backu
     && yum clean all \
     && yum makecache
 
-# Start
 # base development tools required \
-RUN yum groupinstall -y \
-        "Development tools" \
-    yum install -y \
+RUN yum install -y \
         tar \
         initscripts \
         sudo \
         which \
         centos-release-scl \
+        gcc \
         devtoolset-4-gcc-c++ \
         devtoolset-4-gcc \
         zlib \
         zlib-dev \
+        readline-devel \
         openssl-devel \
         sqlite-devel \
         bzip2-devel \
@@ -59,41 +58,49 @@ RUN yum groupinstall -y \
         tar \
         xmlto \
         rpmlint \
-        make \
-    # Install Software Collections repo (needs to be done in separate command) \
-    # newer cpp 11 support required for building node modules \
-    # install metron 0.7.1  \
-     && curl -o /root/metron-0.7.1.tgr.gz https://m9rco-bjhb2-storage.oss-cn-beijing.aliyuncs.com/apache-metron_0.7.1-release.tar.gz \
-     && tar xvf /root/metron-0.7.1.tgr.gz \
+        make 
+
+RUN yum groupinstall -y "Development tools" 
+
+RUN curl -o /root/metron-0.7.1.tgr.gz https://m9rco-bjhb2-storage.oss-cn-beijing.aliyuncs.com/apache-metron_0.7.1-release.tar.gz \
+     && tar xvf /root/metron-0.7.1.tgr.gz 
+
     # install python 2.7.11 but do not make it the default \
-    && curl -o /usr/src/Python-2.7.11.tgz https://m9rco-bjhb2-storage.oss-cn-beijing.aliyuncs.com/Python-2.7.11.tgz \
+RUN curl -o /usr/src/Python-2.7.11.tgz https://m9rco-bjhb2-storage.oss-cn-beijing.aliyuncs.com/Python-2.7.11.tgz \
     && cd /usr/src \
     && tar xvf Python-2.7.11.tgz \
     && rm -rf Python-2.7.11.tgz \
     && cd /usr/src/Python-2.7.11 \
+    && echo "hello marco" \
+    && pwd \
+    && ls -l \
     && ./configure \
-    && make altinstall \
-    && cd /usr/src \
+    && make altinstall
+
+    # install pip
+RUN cd /usr/src \
     && curl -o /usr/src/setuptools-11.3.tar.gz https://m9rco-bjhb2-storage.oss-cn-beijing.aliyuncs.com/setuptools-11.3.tar.gz  \
     && tar xvf setuptools-11.3.tar.gz \
     && rm setuptools-11.3.tar.gz \
     && cd /usr/src/setuptools-11.3 \
-    && python2.7 setup.py install \
     && mkdir /root/.pip \
     && echo "[global]" > /root/.pip/pip.conf \
     && echo "trusted-host=pypi.tuna.tsinghua.edu.cn" >> /root/.pip/pip.conf \
     && echo "index-url=https://pypi.tuna.tsinghua.edu.cn/simple/" >> /root/.pip/pip.conf \
+    && python2.7 setup.py install \
     && easy_install-2.7 pip \
     # install ansible and set the configuration var \
-    && pip2.7 install cryptography==2.5 ansible==2.0.0.2 boto \
-    # java \
-    && cd /usr/src \
+    && pip2.7 install cryptography==2.5 ansible==2.0.0.2 boto
+
+    # Install java \
+RUN cd /usr/src \
     # setup maven \
     && curl -o apache-maven-3.3.9-bin.tar.gz https://m9rco-bjhb2-storage.oss-cn-beijing.aliyuncs.com/apache-maven-3.3.9-bin.tar.gz \
-    && tar xzvf apache-maven-3.3.9-bin.tar.gz \
+    && tar xvf apache-maven-3.3.9-bin.tar.gz \
     && rm apache-maven-3.3.9-bin.tar.gz \
+    && rm -rf /opt/maven/ \ 
     && mv apache-maven-3.3.9 /opt/maven \
-    && ln -s /opt/maven/bin/mvn /usr/bin/mvn \
+    && ln -fs /opt/maven/bin/mvn /usr/bin/mvn \
     # install rpm tools required to build rpms \
     # create a .bashrc for root, enabling the cpp 11 toolset \
     && touch /root/.bashrc \
@@ -115,6 +122,6 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in ; do [ $i == systemd
     rm -f /lib/systemd/system/basic.target.wants/; \
     rm -f /lib/systemd/system/anaconda.target.wants/*;
 
-VOLUME ["/sys/fs/cgroup"]
+# VOLUME ["/sys/fs/cgroup"]
 
 CMD ["/usr/sbin/init"]
