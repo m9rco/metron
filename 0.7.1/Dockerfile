@@ -44,6 +44,7 @@ RUN yum install -y \
         devtoolset-4-gcc \
         zlib \
         zlib-dev \
+        git \
         readline-devel \
         openssl-devel \
         sqlite-devel \
